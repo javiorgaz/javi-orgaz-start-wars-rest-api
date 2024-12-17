@@ -8,18 +8,29 @@ from flask_swagger import swagger
 from flask_cors import CORS
 from utils import APIException, generate_sitemap
 from admin import setup_admin
-from models import db, User
+# esto se hace asi gracias a que models actua como modulo, si no, habria que importar las clases o tablas una a una
+from models import db, User,Planet
 #from models import Person
+from routes import user_bp,planet_bp
+
+# ESTA todo MUY COMENTADO SRRY PERO ES PARA ENTENDERLO todo OK
 
 app = Flask(__name__)
 app.url_map.strict_slashes = False
 
+# con os accedemos a env
+
 db_url = os.getenv("DATABASE_URL")
+
 if db_url is not None:
     app.config['SQLALCHEMY_DATABASE_URI'] = db_url.replace("postgres://", "postgresql://")
 else:
     app.config['SQLALCHEMY_DATABASE_URI'] = "sqlite:////tmp/test.db"
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+
+app.register_blueprint(user_bp,url_prefix = "/user")
+app.register_blueprint(planet_bp,url_prefix = "/planet")
+
 
 MIGRATE = Migrate(app, db)
 db.init_app(app)
@@ -35,15 +46,6 @@ def handle_invalid_usage(error):
 @app.route('/')
 def sitemap():
     return generate_sitemap(app)
-
-@app.route('/user', methods=['GET'])
-def handle_hello():
-
-    response_body = {
-        "msg": "Hello, this is your GET /user response "
-    }
-
-    return jsonify(response_body), 200
 
 # this only runs if `$ python src/app.py` is executed
 if __name__ == '__main__':
