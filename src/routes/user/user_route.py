@@ -2,7 +2,7 @@
 # blueprint nos permite manejar las rutas desde aqui y enviarlas a app
 
 from flask import Blueprint,request,jsonify
-from models import User,db
+from models import User,db,Favourite
 
 # o user_route
 #2 parametros: el nombre de la ruta de este modulo / nombre del modulo
@@ -21,7 +21,7 @@ def get_all_users():
     return jsonify(lista_serializada)
 
 # OBTENER UN USER
-@user_bp.route("/get-user/<int:id>",methods = ["GET"])
+@user_bp.route("/<int:id>",methods = ["GET"])
 def get_user(id):
     # user -> es el modelo 
     # query -> objeto que permite realizar consultas a la base de datos
@@ -35,7 +35,6 @@ def get_user(id):
 def create_user():
     # convertimos la respuesta json recibida en un diccionario python
     response = request.get_json()
-    # creamos una instancia de user con la respuesta
 
     # usamos response.get("email") en lugar de response["email"], porque esta ultima lanzara un error KeyError si email no esta presente
     # Este método devuelve None si la clave no existe, en lugar de lanzar una excepción
@@ -47,11 +46,11 @@ def create_user():
         return "Falta el campo is_active",400
     
 
+    # creamos una instancia de user con la respuesta
     new_user = User(**response)
     # lo guardamos en la base de datos
     db.session.add(new_user)
     db.session.commit()
-    print(new_user)
     return "Usuario creado correctamente!"
 
 @user_bp.route("/delete-user/<int:id>",methods = ["DELETE"])
@@ -60,5 +59,24 @@ def delete_user(id):
     db.session.delete(user_to_delete)
     db.session.commit()
     return "Usuario eliminado correctamente!"
+
+# LOS FAVORITOS DE 1 USERS
+@user_bp.route('<int:id>/favourites',methods = ["GET"])
+def get_user_favourite(id):
+
+    tabla_favourite_user = db.select(Favourite).join(User).where(User.id == id)
+    results = db.session.execute(tabla_favourite_user).scalars().all()
+    favoritos = []
+    for fav in results:
+        if fav.planet:
+            favoritos.append({"id": fav.id, "type": "planet", "name": fav.planet.name})
+        if fav.character:
+            favoritos.append({"id": fav.id, "type": "character", "name": fav.character.name})
+
+    return{
+        "user_id": id,
+        "favorites": favoritos
+    }
+
 
 

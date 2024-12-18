@@ -31,7 +31,6 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 app.register_blueprint(user_bp,url_prefix = "/user")
 app.register_blueprint(planet_bp,url_prefix = "/planet")
 
-
 MIGRATE = Migrate(app, db)
 db.init_app(app)
 CORS(app)

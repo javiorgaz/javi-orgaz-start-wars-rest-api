@@ -7,5 +7,10 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
-from .user.model_user import User
+from .battleship.model_battleship import Battleship
+from .character.model_character import Character
+from .city.model_city import City
+from .favourite.model_favourite import Favourite
 from .planet.model_planet import Planet
+from .race.model_race import Race
+from .user.model_user import User
