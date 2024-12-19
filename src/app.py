@@ -11,7 +11,7 @@ from admin import setup_admin
 # esto se hace asi gracias a que models actua como modulo, si no, habria que importar las clases o tablas una a una
 from models import db, User,Planet
 #from models import Person
-from routes import user_bp,planet_bp
+from routes import user_bp,planet_bp,bp_favourite
 
 # ESTA todo MUY COMENTADO SRRY PERO ES PARA ENTENDERLO todo OK
 
@@ -30,6 +30,7 @@ app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 app.register_blueprint(user_bp,url_prefix = "/user")
 app.register_blueprint(planet_bp,url_prefix = "/planet")
+app.register_blueprint(bp_favourite)
 
 MIGRATE = Migrate(app, db)
 db.init_app(app)

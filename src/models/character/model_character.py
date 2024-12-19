@@ -21,7 +21,7 @@ class Character(db.Model):
         return {
             "id": self.id,
             "name": self.name,
-            "age": self.biome,
+            "age": self.age,
             "race_id":self.race_id,
             "city_id":self.city_id,
             "battleship_id":self.battleship_id

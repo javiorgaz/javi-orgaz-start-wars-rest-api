@@ -66,6 +66,7 @@ def get_user_favourite(id):
 
     tabla_favourite_user = db.select(Favourite).join(User).where(User.id == id)
     results = db.session.execute(tabla_favourite_user).scalars().all()
+    print(tabla_favourite_user)
     favoritos = []
     for fav in results:
         if fav.planet:
